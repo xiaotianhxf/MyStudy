@@ -76,6 +76,7 @@ git reset --hard c2b9e83
 
 
 ======创建ssh密钥过程======
+这个作用是避免每次push和pull都需要输入密码,但千万要注意，只能在linux下用，window是不行的！
 1.查看是否有了ssh密钥： cd ~/.ssh
 如果有备份删除，如果没有就不会有此文件夹
 2. 生存密钥
@@ -83,6 +84,16 @@ ssh-keygen  -t rsa -C "hexiaofan@meizu.com"
 按三个回车，密码为空，路径为当前系统用户目录之下。
 最后得到两个文件id_rsa和id_rsa.pub，位于C:\Users\hexiaofan\.ssh之下
 
+====win下避免push/pull都要输入密码的方法：
+cd ~
+touch .git-credentials
+vi .git-credentials
+#在文件中添加下面的路径，注意替换{username}和{password}为github.com的真实用户
+https://{username}:{password}@github.com
+#然后 把这个文件加入config
+git config --global credential.helper store
+
+这样就可以了
 
 ======远程建立库，同步本地=======
 先登录https://github.com
@@ -133,6 +144,8 @@ change dev
 git branch -d dev
 
 
+
+===========================
 
 
 ==========Git基本常用命令如下：====
