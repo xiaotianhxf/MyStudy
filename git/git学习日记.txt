@@ -1,0 +1,210 @@
+GIT学习日记 
+
+=========基本操作========
+1. 添加用户密码和邮箱
+git config --global user.name "hexiaofan"
+git config --global user.email "hexiaofan@meizu.com"
+
+2. 创建版本库
+先在选定的目录下创建一个文件夹，再用init命令初始化，初始完成之后文件夹下有一个隐藏的.git文件夹，这个就是git的版本信息，不可动。
+eg:
+cd  /d
+mkdir git
+cd git
+mkdir project
+cd project 
+mkdir testgit
+cd testgit
+git init
+为了后面的管理，我把所有东西放在d盘的git/project目录下
+再用git init命令初始化一个名为testgit的目录
+
+2. 提交文件
+
+于testgit目录下创建一个readme.txt文件，可以用vi创建
+然后提交到暂存区，没有提示表示成功
+git add readme.txt
+再提交到仓库
+git commit -m "这里是注释"
+
+3. 查看状态
+*这里需要注意，当readme.txt为空文件时，提交不了，当注释为空时，也提交不了
+#再查看状态，可以看到暂存区的变化和是否有新的文件
+git status
+
+4. 修改之后对比文件
+修改readme.txt文件之后，再用git diff readme.txt，可以看到修改了什么
+git diff readme.txt
+
+5. 修改之后再次提交
+步骤跟新提交一样。都是先用git add readme.txt，再用git commit -m "这是注释" 提交。
+
+6. 查看日志
+这时已修改过readme.txt，可以用git log查看提交修改的日志，日志是倒序
+git log
+如果嫌弃日志显示得太多，可以少--pretty=oneline减少显示
+git log --pretty=oneline
+
+7. 回退版本
+回退一个版本：
+git reset --hard HEAD^    或者  git reset --hard HEAD~1
+回退两个版本
+git reset --hard HEAD^^    或者  git reset --hard HEAD~2
+
+以此类推
+
+如果这时再重新回来之前修改过的版本呢？
+先用git reflog 显示版本信息
+再用git reset --hard 版本号   来恢复
+如：
+git reset --hard c2b9e83
+
+8. 撤销修改
+如果修改之后发现有错误，想撤销修改，方法如下：
+一是直接手工恢复，前提是你知道修改了什么。但这在命令下很难，比如有换行空格什么的。
+二是直接用git reset --hard HEAD~1 回退到上个版本
+
+上面这两种都不是最好的
+三是 git checkout -- yourfile.txt   这里如果修改已提交到暂存区再修改的话，会恢复到暂存区那个状态
+
+
+9. 删除文件
+可以用rm b.txt 直接删除b.txt文件
+此时有两种选择，一是恢复删除文件，二是提交删除。
+恢复删除文件可以用 git checkout -- b.txt
+提交删除则是  git commit -m "delete b.txt"
+
+
+======创建ssh密钥过程======
+1.查看是否有了ssh密钥： cd ~/.ssh
+如果有备份删除，如果没有就不会有此文件夹
+2. 生存密钥
+ssh-keygen  -t rsa -C "hexiaofan@meizu.com"
+按三个回车，密码为空，路径为当前系统用户目录之下。
+最后得到两个文件id_rsa和id_rsa.pub，位于C:\Users\hexiaofan\.ssh之下
+
+
+======远程建立库，同步本地=======
+先登录https://github.com
+然后创建一个repository，再根据github的提示推送本地的代码上去
+git remote add origin https://github.com/xiaotianhxf/testgit.git
+git push -u origin master
+
+#第一次推送时，加上-u参数是让本地与远程关联起来。
+
+现在再修改本地文件之后，可以用下面命令推送到远程，就此拥有真正的分布式分支了
+git push origin master
+
+========从远程克隆========
+先cd 到目标目录
+git clone https://github.com/xiaotianhxf/testgit3
+
+
+=======分支======
+1. 创建分支
+先到目标项目下面
+用git branch  可以看到当前分支，没有分过的只有master，也就是主干
+再用git checkout -b dev  创建分支dev并切换到dev分支
+此时用git branch可以看到两个分支，显示为绿色的且前面有*号的是当前所在分支
+
+git checkout -b dev相当于下面两条命令
+git branch dev   创建
+git checkout dev  切换
+
+2. 合并分支
+比如合并dev分支到master主干，那么就先到主干下
+然后再用 git merge dev 即可把dev分支合并到主干之下了。
+
+3. 冲突解决
+合并分支之后，可能会有冲突，此时先用git status查看冲突文件
+<<<<<< HEAD
+change master
+=========
+change dev
+>>>>>> dev
+
+其中<<< HEAD那里是主干修改过的
+>>> dev这里是分支的
+
+修改冲突之后，重新提交即可。
+
+4. 删除分支
+删除dev分支：
+git branch -d dev
+
+
+
+
+==========Git基本常用命令如下：====
+
+   mkdir：         XX (创建一个空目录 XX指目录名)
+
+   pwd：          显示当前目录的路径。
+
+   git init          把当前的目录变成可以管理的git仓库，生成隐藏.git文件。
+
+   git add XX       把xx文件添加到暂存区去。
+
+   git commit –m “XX”  提交文件 –m 后面的是注释。
+
+   git status        查看仓库状态
+
+   git diff  XX      查看XX文件修改了那些内容
+
+   git log          查看历史记录
+
+   git reset  –hard HEAD^ 或者 git reset  –hard HEAD~ 回退到上一个版本
+
+                        (如果想回退到100个版本，使用git reset –hard HEAD~100 )
+
+   cat XX         查看XX文件内容
+
+   git reflog       查看历史记录的版本号id
+
+   git checkout — XX  把XX文件在工作区的修改全部撤销。
+
+   git rm XX          删除XX文件
+
+   git remote add origin https://github.com/tugenhua0707/testgit 关联一个远程库
+
+   git push –u(第一次要用-u 以后不需要) origin master 把当前master分支推送到远程库
+
+   git clone https://github.com/tugenhua0707/testgit  从远程库中克隆
+
+   git checkout –b dev  创建dev分支 并切换到dev分支上
+
+   git branch  查看当前所有的分支
+
+   git checkout master 切换回master分支
+
+   git merge dev    在当前的分支上合并dev分支
+
+   git branch –d dev 删除dev分支
+
+   git branch name  创建分支
+
+   git stash 把当前的工作隐藏起来 等以后恢复现场后继续工作
+
+   git stash list 查看所有被隐藏的文件列表
+
+   git stash apply 恢复被隐藏的文件，但是内容不删除
+
+   git stash drop 删除文件
+
+   git stash pop 恢复文件的同时 也删除文件
+
+   git remote 查看远程库的信息
+
+   git remote –v 查看远程库的详细信息
+
+   git push origin master  Git会把master分支推送到远程库对应的远程分支上
+
+
+
+
+
+
+
+
+
+
